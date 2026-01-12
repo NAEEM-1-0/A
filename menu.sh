@@ -2,9 +2,9 @@
 
 # ==================================
 #   Nobita Hosting - MAIN MENU
+#   FIXED FOR curl | bash
 # ==================================
 
-# Force correct working directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CD_DIR="$SCRIPT_DIR/cd"
 
@@ -21,18 +21,18 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-# Check cd folder
+# Ensure cd folder exists
 if [ ! -d "$CD_DIR" ]; then
-  echo -e "${RED}❌ cd/ folder not found at:${NC} $CD_DIR"
+  echo -e "${RED}❌ cd/ folder not found: $CD_DIR${NC}"
   exit 1
 fi
 
-# Auto-fix permissions
+# Fix permissions
 chmod +x "$CD_DIR"/*.sh 2>/dev/null
 
 pause() {
   echo
-  read -p "Press Enter to continue..."
+  read -r -p "Press Enter to continue..." < /dev/tty
 }
 
 while true; do
@@ -52,7 +52,9 @@ while true; do
   echo -e "${GREEN}9) System Info${NC}"
   echo -e "${RED}0) Exit${NC}"
   echo
-  read -p "Select option: " choice
+
+  # 👇 THIS IS THE KEY FIX
+  read -r -p "Select option: " choice < /dev/tty
 
   case "$choice" in
     1) bash "$CD_DIR/panel.sh" ;;
